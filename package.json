@@ -1,0 +1,21 @@
+{
+  "name": "com.haier.ac",
+  "version": "1.0.8",
+  "main": "app.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "binary-parser": "^1.5.0",
+    "debug": "^4.1.1",
+    "hexy": "^0.3.0",
+    "lodash": "^4.17.21",
+    "rxjs": "^6.5.4"
+  },
+  "devDependencies": {
+    "@tsconfig/node16": "^16.1.1",
+    "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.5",
+    "@types/node": "^20.6.0",
+    "typescript": "^5.1.6"
+  }
+}

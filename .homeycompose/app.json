@@ -1,0 +1,29 @@
+{
+  "id": "com.haier.ac",
+  "version": "1.0.8",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "brandColor": "#005BAA",
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Haier AC"
+  },
+  "description": {
+    "en": "Haier Air Conditioner"
+  },
+  "category": [
+    "climate"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/haier_small.jpg",
+    "large": "/assets/images/haier_large.jpg",
+    "xlarge": "/assets/images/haier_xlarge.jpg"
+  },
+  "author": {
+    "name": "Yasar Semih Alev",
+    "email": "semihalev@gmail.com"
+  }
+}

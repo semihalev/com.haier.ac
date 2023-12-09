@@ -1,0 +1,51 @@
+{
+  "name": {
+    "en": "Haier AC"
+  },
+  "class": "thermostat",
+  "capabilities": [
+    "thermostat_mode",
+    "target_temperature",
+    "measure_temperature",
+    "health_mode",
+    "fan_speed_mode",
+    "onoff"
+  ],
+  "capabilitiesOptions": {
+    "target_temperature": {
+      "step": 1,
+      "decimals": 1,
+      "min": 16,
+      "max": 30
+    }
+  },
+  "platforms": [
+    "local"
+  ],
+  "connectivity": [
+    "lan"
+  ],
+  "images": {
+    "small": "{{driverAssetsPath}}/images/small.jpg",
+    "large": "{{driverAssetsPath}}/images/large.jpg",
+    "xlarge": "{{driverAssetsPath}}/images/xlarge.jpg"
+  },
+  "energy": {
+    "approximation": {
+      "usageOn": 2200,
+      "usageOff": 10
+    }
+  },
+  "pair": [
+    {
+      "id": "list_devices",
+      "template": "list_devices",
+      "navigation": { "next": "add_devices" }
+    },
+    {
+      "id": "add_devices",
+      "template": "add_devices"
+    }
+  ],
+  "discovery": "haier-ac"
+}

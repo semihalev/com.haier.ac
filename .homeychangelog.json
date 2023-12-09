@@ -1,0 +1,23 @@
+{
+  "1.0.0": {
+    "en": "First version"
+  },
+  "1.0.1": {
+    "en": "Bugfixes"
+  },
+  "1.0.2": {
+    "en": "Crash fixes."
+  },
+  "1.0.4": {
+    "en": "Added better discovery listener"
+  },
+  "1.0.5": {
+    "en": "Bugfixes"
+  },
+  "1.0.6": {
+    "en": "Added energy consumption"
+  },
+  "1.0.7": {
+    "en": "Added health mode and fan speed picker"
+  }
+}
