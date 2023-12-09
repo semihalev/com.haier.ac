@@ -1,16 +1,16 @@
-import udp from 'dgram';
+import UDP from 'dgram';
 import { Driver, DiscoveryResultMAC } from 'homey';
 
 class HaierACDriver extends Driver {
 
   async onInit() {
-    const discovery = udp.createSocket('udp4');
+    const discovery = UDP.createSocket('udp4');
     discovery.bind(7083);
 
-    discovery.on('message', (msg, rinfo) => {
-      this.log('Data received from client : ' + msg.toString());
-      this.log('Received %d bytes from %s:%d\n',msg.length, rinfo.address, rinfo.port);
+    discovery.on('message', (msg: Buffer, rinfo: UDP.RemoteInfo) => {
+      this.log('Broadcast received %d bytes from %s:%d',msg.length, rinfo.address, rinfo.port);
 
+      //send echo
       discovery.send(msg, 0, msg.length, rinfo.port, rinfo.address);
     });
   }

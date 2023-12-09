@@ -1,6 +1,6 @@
 {
   "name": "com.haier.ac",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "main": "app.ts",
   "scripts": {
     "build": "tsc"

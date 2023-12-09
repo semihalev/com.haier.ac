@@ -120,13 +120,6 @@ export class HaierAC {
 
     this._client.on('error', (err) => {
       this.connectionState.next({error:err, connected:false})
-      /*from([1]).pipe(
-	delay(3000)
-      ).subscribe(() => {
-        this._connect().catch((err) => {
-          this.connectionState.next({error:err, connected:false});
-        });
-      });*/
 
       logError(err);
     });
