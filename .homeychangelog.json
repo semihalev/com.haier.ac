@@ -19,5 +19,8 @@
   },
   "1.0.7": {
     "en": "Added health mode and fan speed picker"
+  },
+  "1.0.8": {
+    "en": "Project converted to typescript."
   }
 }
