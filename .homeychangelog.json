@@ -25,5 +25,8 @@
   },
   "1.1.0": {
     "en": "Added support link."
+  },
+  "1.1.1": {
+    "en": "Added udp ping for device"
   }
 }

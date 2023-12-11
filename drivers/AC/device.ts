@@ -1,11 +1,22 @@
 import { Device, DiscoveryResultMAC } from 'homey';
 import { HaierAC, Mode } from '../../lib/haier-ac-remote';
+import UDP from 'dgram';
 
 class HaierACDevice extends Device {
 
   _haierACDevice: HaierAC | null = null;
   _state: any | null = null;
   _helloTimer: any | null = null;
+
+  async onInit() {
+    // ping the old device for discovery
+    if (this.getStoreValue('address')) {
+      const udp = UDP.createSocket('udp4');
+      const buf = Buffer.from('ping');
+      udp.send(buf, 0, buf.length, 41323, this.getStoreValue('address'));
+      udp.close();
+    }
+  }
 
   onDiscoveryResult(discoveryResult: DiscoveryResultMAC) {
     return discoveryResult.id === this.getData().id;
@@ -40,6 +51,8 @@ class HaierACDevice extends Device {
     this._setCapabilityListeners();
 
     this._startHelloTimer();
+
+    this.setStoreValue('address', discoveryResult.address);
   }
 
   async onDiscoveryAddressChanged(discoveryResult: DiscoveryResultMAC) {
@@ -47,6 +60,8 @@ class HaierACDevice extends Device {
 
     this._haierACDevice.ip = discoveryResult.address;
     this._haierACDevice.mac = discoveryResult.mac;
+
+    this.setStoreValue('address', discoveryResult.address);
   }
 
   _getCurrentTemperature() {
