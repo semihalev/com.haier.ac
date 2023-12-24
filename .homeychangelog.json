@@ -6,7 +6,7 @@
     "en": "Bugfixes"
   },
   "1.0.2": {
-    "en": "Crash fixes."
+    "en": "Crash fixes"
   },
   "1.0.4": {
     "en": "Added better discovery listener"
@@ -21,12 +21,15 @@
     "en": "Added health mode and fan speed picker"
   },
   "1.0.8": {
-    "en": "Project converted to typescript."
+    "en": "Project converted to typescript"
   },
   "1.1.0": {
-    "en": "Added support link."
+    "en": "Added support link"
   },
   "1.1.1": {
     "en": "Added udp ping for device"
+  },
+  "1.1.2": {
+    "en": "Fixed disconnect problems"
   }
 }

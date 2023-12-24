@@ -1,4 +1,3 @@
-import _debug from 'debug';
 import { hexy } from 'hexy';
 import pickBy from 'lodash/pickBy';
 import { Socket } from 'net';
@@ -8,30 +7,6 @@ import { filter, mapTo, take, timeout, catchError } from 'rxjs/operators';
 import { FanSpeed, Limits, Mode, State, ConnectionState } from './_types';
 import * as commands from './commands';
 import { parseState, TheParser, TheParserResult } from './parsers';
-
-const debug = _debug('haier-ac');
-const logReceived = debug.extend('recv');
-const logSent = debug.extend('sent');
-const logError = debug.extend('error');
-const logState = debug.extend('state');
-const logConnection = debug.extend('connection');
-
-function send(cl: Socket, buf: Buffer) {
-  cl.write(buf);
-  logSent(
-    hexy(buf, {
-      format: 'twos',
-    }),
-  );
-}
-
-function recv(buf: Buffer) {
-  logReceived(
-    hexy(buf, {
-      format: 'twos',
-    }),
-  );
-}
 
 const theParser = new TheParser();
 
@@ -55,6 +30,7 @@ export class HaierAC {
   ip: string;
   port = 56800;
   mac: string;
+  log: any;
   timeout: number;
   protected _rawData$ = new Subject<Buffer>();
   protected _client = new Socket();
@@ -62,7 +38,7 @@ export class HaierAC {
   connectionState = new Subject<ConnectionState>();
   protected _seq = 0;
 
-  constructor(options: ConstructorOptions) {
+  constructor(options: ConstructorOptions, log) {
     const { ip, mac, timeout = 500 } = options;
 
     Object.assign(this, {
@@ -71,11 +47,11 @@ export class HaierAC {
       timeout,
     });
 
+    this.log = log;
+
     this._client.setTimeout(this.timeout);
 
     this._rawData$.subscribe((data) => {
-      recv(data);
-
       try {
         const resp = theParser.parse(data);
         const response = parseState(resp);
@@ -92,7 +68,7 @@ export class HaierAC {
           this.state$.next(nextStateRaw);
         }
       } catch (error) {
-        logError(error.message);
+        this.log(error.message);
       }
     });
 
@@ -104,7 +80,7 @@ export class HaierAC {
       this._rawData$.next(data);
     });
 
-    this._client.on('connect', () => {
+    this._client.on('connection', () => {
       this.connectionState.next({connected:true});
     });
 
@@ -115,32 +91,23 @@ export class HaierAC {
         });
       }
 
-      logError('Connection closed', err);
+      this.log('Connection closed', err);
     });
 
     this._client.on('error', (err) => {
       this.connectionState.next({error:err, connected:false})
 
-      logError(err);
+      this.log(err);
     });
 
-    this.connectionState.subscribe(logConnection);
-    this.state$.subscribe(logState);
+    // this.connectionState.subscribe(this.log);
+    // this.state$.subscribe(this.log);
   }
 
   protected _connect() {
-    return from(
-      new Promise((resolve) => {
-        this._client.connect(this.port, this.ip, () => resolve);
-      }),
-    )
-    .pipe(
-        timeout(this.timeout),
-        catchError((err) =>
-          throwError(err.name === 'TimeoutError' ? 'connection timeout' : err),
-        ),
-    )
-    .toPromise();
+    return new Promise((resolve) => {
+      this._client.connect(this.port, this.ip, () => resolve);
+    }).catch(throwError)
   }
 
   hello() {
@@ -203,9 +170,9 @@ export class HaierAC {
     );
 
     this._seq = (this._seq + 1) % 256;
-    send(this._client, cmd);
+    this._client.write(cmd);
 
-    return o$.toPromise().catch(() => {
+    return o$.toPromise().catch((error) => {
       this._connect().catch((err) => {
         this.connectionState.next({error: err, connected:false});
       });

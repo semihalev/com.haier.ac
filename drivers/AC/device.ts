@@ -1,6 +1,5 @@
 import { Device, DiscoveryResultMAC } from 'homey';
 import { HaierAC, Mode } from '../../lib/haier-ac-remote';
-import UDP from 'dgram';
 
 class HaierACDevice extends Device {
 
@@ -11,11 +10,11 @@ class HaierACDevice extends Device {
   async onInit() {
     // ping the old device for discovery
     if (this.getStoreValue('address')) {
-      const udp = UDP.createSocket('udp4');
-      const buf = Buffer.from('ping');
-      udp.send(buf, 0, buf.length, 41323, this.getStoreValue('address'));
-      udp.close();
+      const mac = await this.homey.arp.getMAC(this.getStoreValue('address'));
+      this.log("Last seen address:", this.getStoreValue('address'), mac);
     }
+
+    this.setUnavailable('Discovering the device in the network...');
   }
 
   onDiscoveryResult(discoveryResult: DiscoveryResultMAC) {
@@ -23,13 +22,19 @@ class HaierACDevice extends Device {
   }
 
   async onDiscoveryAvailable(discoveryResult: DiscoveryResultMAC) {
-    this.log("Haier AC is available", `MAC=${discoveryResult.mac} IP Address=${discoveryResult.address}`);
+    if (this._haierACDevice !== null) {
+      return;
+    }
 
+    this.setAvailable();
+
+    this.log("Haier AC is available", `MAC=${discoveryResult.mac} IP Address=${discoveryResult.address}`);
+  
     this._haierACDevice = new HaierAC({
       ip: discoveryResult.address,
       mac: discoveryResult.mac,
       timeout: 15000
-    }); 
+    }, this.log); 
 
     this._haierACDevice.connectionState.subscribe(state => {
       this.log("Haier AC connection state", state);
@@ -175,10 +180,11 @@ class HaierACDevice extends Device {
       });
     });
   }
+
   _startHelloTimer() {
-    this._helloTimer = setInterval(async () => {
+    this._helloTimer = this.homey.setInterval(async () => {
       this._haierACDevice.hello();
-    }, 15 * 1000);
+    }, 10 * 1000);
   }
 
 }
