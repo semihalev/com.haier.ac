@@ -80,7 +80,7 @@ export class HaierAC {
       this._rawData$.next(data);
     });
 
-    this._client.on('connection', () => {
+    this._client.on('connect', () => {
       this.connectionState.next({connected:true});
     });
 

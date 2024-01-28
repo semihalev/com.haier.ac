@@ -10,8 +10,12 @@ class HaierACDevice extends Device {
   async onInit() {
     // ping the old device for discovery
     if (this.getStoreValue('address')) {
-      const mac = await this.homey.arp.getMAC(this.getStoreValue('address'));
-      this.log("Last seen address:", this.getStoreValue('address'), mac);
+      try { 
+        const mac = await this.homey.arp.getMAC(this.getStoreValue('address'));
+        this.log("Last seen address:", this.getStoreValue('address'), mac);
+      } catch (e) {
+        this.error(e.message);
+      }
     }
 
     this.setUnavailable('Discovering the device in the network...');
